@@ -94,6 +94,7 @@ namespace MAction.WpfCustomControlLibrary
                         //Paragraph paragraph = new Paragraph();
                         Hyperlink hlink = new Hyperlink(run2);
                         hlink.NavigateUri = new Uri(match[i].Value);
+                        hlink.ToolTip = match[i].Value;
                         hlink.RequestNavigate += Hlink_RequestNavigate;
                         p.Inlines.Add(hlink);
                         //paragraph.Inlines.Add(hlink);
