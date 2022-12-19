@@ -1,4 +1,4 @@
 # MyRichTextBox
 ## Properties
-- ContentText
+- `ContentText`
 convert text to richtext and convert all urls to link
