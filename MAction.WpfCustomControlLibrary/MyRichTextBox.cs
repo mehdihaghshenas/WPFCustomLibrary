@@ -73,11 +73,15 @@ namespace MAction.WpfCustomControlLibrary
             obj.Document.Blocks.Clear();
             var text = e.NewValue.ToString();
             Paragraph p = new Paragraph();
-            foreach (var t in text.Split("\n"))
+            p.FontFamily = obj.FontFamily;
+            p.FontSize = obj.FontSize;
+            p.FontStyle = obj.FontStyle;
+
+            foreach (var t in text.Split('\n'))
             {
                 Regex regex = new Regex(@"(http|ftp|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:\/~+#-]*[\w@?^=%&\/~+#-])", RegexOptions.IgnoreCase);
                 var match = regex.Matches(t);
-                if (!match.Any(x => x.Success))
+                if (!match.OfType<Match>().Any(x => x.Success))
                 {
                     //obj.Document.Blocks.Add(new Paragraph(new Run(t)));
                     p.Inlines.Add(t);
@@ -90,22 +94,25 @@ namespace MAction.WpfCustomControlLibrary
                         p.Inlines.Add(t.Substring(index, match[i].Index - index));
                         index = match[i].Index + match[i].Length;
                         Run run2 = new Run(match[i].Groups[2].Value +
-                            (match[i].Groups[3].Value[0] == '/' || match[i].Groups[3].Value[0] == '?' ? "" : match[i].Groups[3].Value));
+                            (match[i].Groups[3].Value[0] == '/' || match[i].Groups[3].Value[0] == '?' || match[i].Groups[3].Value[0] == ':' ? "" : match[i].Groups[3].Value));
                         //Paragraph paragraph = new Paragraph();
                         Hyperlink hlink = new Hyperlink(run2);
                         hlink.NavigateUri = new Uri(match[i].Value);
+                        hlink.FontFamily = obj.FontFamily;
+                        hlink.FontSize = obj.FontSize;
+                        hlink.FontWeight = obj.FontWeight;
+                        hlink.FontStyle = obj.FontStyle;
                         hlink.ToolTip = match[i].Value;
                         hlink.RequestNavigate += Hlink_RequestNavigate;
                         p.Inlines.Add(hlink);
                         //paragraph.Inlines.Add(hlink);
 
                     }
-                    p.Inlines.Add(new LineBreak());
                 }
+                p.Inlines.Add(new LineBreak());
             }
             obj.Document.Blocks.Add(p);
             //obj.Document.Blocks.Add(paragraph);
-
         }
 
         private static void Hlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
